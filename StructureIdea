@@ -1,0 +1,18 @@
+cafe-review-app/
+│
+├── app/
+│   ├── main.py              # Entry point for FastAPI app
+│   ├── database.py          # Database connection and session setup
+│   ├── models.py            # SQLAlchemy models for Café, Review, etc.
+│   ├── schemas.py           # Pydantic schemas for data validation
+│   ├── crud.py              # Database operations (create, read, update, delete)
+│   └── routes/              # Separate route files for better structure
+│       ├── cafes.py         # API endpoints related to cafés
+│       └── reviews.py       # API endpoints related to reviews
+│
+├── static/                  # Static files (CSS, JS, images)
+├── templates/               # Jinja2 HTML templates (if you use server-side rendering)
+│
+├── .venv                     # Environment variables (e.g., DB credentials)
+├── requirements.txt         # Project dependencies
+└── README.md                # Project overview and instructions
