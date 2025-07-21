@@ -11,6 +11,13 @@ import app.schemas as schemas
 def get_cafes(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Cafe).filter(models.Cafe.adstat == "A").offset(skip).limit(limit).all()
 
+def get_cafes_all(db: Session, skip: int = 0, limit: int = 100):
+    """
+    This function retrieves all cafes regardless of their status.
+    Useful for administrative purposes.
+    """
+    return db.query(models.Cafe).offset(skip).limit(limit).all()
+
 # Get a single cafe by ID
 def get_cafe(db: Session, cafe_id: int):
     return db.query(models.Cafe).filter(models.Cafe.id == cafe_id, models.Cafe.adstat == "A").first()

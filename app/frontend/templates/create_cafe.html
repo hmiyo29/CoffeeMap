@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create New Café</title>
+</head>
+<body>
+  <div style="display: flex; flex-direction: column; align-items: center;">
+    <h2>Add a New Café</h2>
+    <form action="/cafes/newcafe" method="post">
+      <label>Name:</label><br>
+      <input type="text" name="name" required><br><br>
+
+      <label>Street:</label><br>
+      <input type="text" name="street" required><br><br>
+
+      <label>Street Number:</label><br>
+      <input type="text" name="street_number" required><br><br>
+
+      <label>City:</label><br>
+      <input type="text" name="city" required><br><br>
+
+      <label>Brew Methods (comma separated):</label><br>
+      <input type="text" name="brew_methods"><br><br>
+
+      <button type="submit">Add Café</button>
+    </form>
+  </div>
+</body>
+</html>
