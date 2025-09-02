@@ -17,9 +17,9 @@ class Cafe(Base):
     brew_methods = Column(String, nullable=True)  # e.g. "V60, Aeropress, Espresso"
     adstat = Column(String, default="A")  # Default status is "A" (active)
     # Relationships
-    reviews = relationship("Review", back_populates="cafe")
+    # reviews = relationship("Review", back_populates="cafe")
 
-
+    reviews = relationship("Review", back_populates="cafe", cascade="all, delete-orphan")
 # --------------------------------------
 # Review Model
 # --------------------------------------

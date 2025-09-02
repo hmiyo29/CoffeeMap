@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cafes</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .search-box { margin-bottom: 20px; }
+    .cafe-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .cafe-card h3 {
+      margin: 0;
+    }
+    .cafe-card p {
+      margin: 5px 0;
+    }
+    .cafe-card a {
+      color: blue;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cafes</h1>
+
+  <form method="get" action="/cafes/list" class="search-box">
+    <input type="text" name="search" placeholder="Search cafes..." value="{{ search or '' }}">
+    <input type="text" name="brew_method" placeholder="Filter by brew method" value="{{ brew_method or '' }}">
+    <button type="submit">Search</button>
+  </form>
+
+  {% for cafe in cafes %}
+    <div class="cafe-card">
+      <h3>{{ cafe.name }}</h3>
+      <p><b>Address:</b> {{ cafe.address }}</p>
+      <p><b>Brew Methods:</b> {{ cafe.brew_methods or 'N/A' }}</p>
+      <p><b>Description:</b> {{ cafe.description or 'No description available.' }}</p>
+      <a href="/cafes/detail/{{ cafe.id }}">View Details</a>
+    </div>
+  {% endfor %}
+</body>
+</html>

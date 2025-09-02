@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Form, Request
+from fastapi import APIRouter, Depends, HTTPException, Form, Request, Query
 from sqlalchemy.orm import Session
 from typing import List
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -8,6 +8,7 @@ from geopy.geocoders import Nominatim
 from app import crud, schemas
 from app.database import get_db
 from app.models import Cafe # Assuming app.models is where Cafe is defined
+
 
 router = APIRouter(
     prefix="/cafes",
@@ -35,6 +36,7 @@ def create_cafe_form(request: Request):
 @router.post("/newcafe")
 def create_cafe_by_address(
     name: str = Form(...),
+    postal_code: str = Form(...),
     street: str = Form(...),
     street_number: str = Form(...),
     city: str = Form(...),
@@ -42,7 +44,7 @@ def create_cafe_by_address(
     db: Session = Depends(get_db)
 ):
     # Combine into full address
-    address = f"{street} {street_number}, {city}, Netherlands"
+    address = f"{street} {street_number}, {postal_code}, {city}, Netherlands"
 
     location = geolocator.geocode(address)
     if location is None:
@@ -72,6 +74,35 @@ def create_cafe_success(request: Request):
         }
     )
 
+# add filter by brew method and name and address
+@router.get("/list", response_class=HTMLResponse)
+def list_cafes(
+    request: Request,
+    db: Session = Depends(get_db),
+    search: str = Query(None, description="Search by name or address"),
+    brew_method: str = Query(None, description="Filter by brew method")
+):
+    cafes = crud.get_cafes(db)
+
+    # Apply filters
+    if search:
+        cafes = [c for c in cafes if search.lower() in c.name.lower() or search.lower() in c.address.lower()]
+
+    if brew_method:
+        cafes = [c for c in cafes if c.brew_methods and brew_method.lower() in c.brew_methods.lower()]
+
+    return templates.TemplateResponse(
+        "cafe_list.html",
+        {"request": request, "cafes": cafes, "search": search, "brew_method": brew_method}
+    )
+
+@router.get("/detail/{cafe_id}", response_class=HTMLResponse)
+def cafe_detail(request: Request, cafe_id: int, db: Session = Depends(get_db)):
+    cafe = crud.get_cafe(db, cafe_id=cafe_id)
+    if not cafe:
+        raise HTTPException(status_code=404, detail="Cafe not found")
+    return templates.TemplateResponse("cafe_detail.html", {"request": request, "cafe": cafe})
+
 # -------------------------------------
 # Get all cafes
 # -------------------------------------
@@ -84,12 +115,20 @@ def read_cafes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 # Get single cafe by ID
 # This should come after specific static paths like /new or /newcafe
 # -------------------------------------
-@router.get("/{cafe_id}", response_model=schemas.Cafe)
-def read_cafe(cafe_id: int, db: Session = Depends(get_db)):
+# @router.get("/{cafe_id}", response_model=schemas.Cafe)
+# def read_cafe(cafe_id: int, db: Session = Depends(get_db)):
+#     cafe = crud.get_cafe(db, cafe_id=cafe_id)
+#     if cafe is None:
+#         raise HTTPException(status_code=404, detail="Cafe not found")
+#     return cafe
+
+@router.get("/{cafe_id}", response_class=HTMLResponse)
+def read_cafe_detail(request: Request, cafe_id: int, db: Session = Depends(get_db)):
     cafe = crud.get_cafe(db, cafe_id=cafe_id)
     if cafe is None:
         raise HTTPException(status_code=404, detail="Cafe not found")
-    return cafe
+    return templates.TemplateResponse("cafe_detail.html", {"request": request, "cafe": cafe, "reviews": cafe.reviews})
+
 # -------------------------------------
 # Soft delete a cafe
 # -------------------------------------
@@ -110,3 +149,7 @@ def restore_cafe(cafe_id: int, db: Session = Depends(get_db)):
     if restored_cafe is None:
         raise HTTPException(status_code=404, detail="Cafe not found")
     return restored_cafe
+
+
+from fastapi import Query
+

@@ -38,10 +38,6 @@ def db_check(db: Session = Depends(get_db)):
         return {"status": "error", "message": str(e)}
 
 
-
-
-
-
 @app.get("/map", response_class=HTMLResponse)
 async def get_map(request: Request):
     return templates.TemplateResponse("map.html", {"request": request})
