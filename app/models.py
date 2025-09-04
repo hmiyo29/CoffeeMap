@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from app.database import Base
 
@@ -28,8 +29,9 @@ class Review(Base):
     __tablename__ = "reviews"
 
     id = Column(Integer, primary_key=True, index=True)
+    reviewer_name = Column(String, nullable=False)
     cafe_id = Column(Integer, ForeignKey("cafes.id"))
-    created_at = Column(DateTime, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     rating = Column(Integer, nullable=False)
     brew_method = Column(String, nullable=True)
     roast_notes = Column(String, nullable=True)

@@ -23,11 +23,15 @@
   </div>
 
   <h2>Reviews</h2>
-  {% if cafe.reviews %}
-    {% for review in cafe.reviews %}
+  {% if reviews %}
+    {% for review in reviews %}
       <div class="review-card">
         <div class="review-header">
-          {{ review.reviewer_name }} - 
+          {% if review.reviewer_name %}
+          {{ review.reviewer_name }} - {{ review.created_at}}
+          {% else %}
+          Anonymous - {{ review.created_at}}
+          {% endif %}
           <span class="rating">⭐ {{ review.rating }}/5</span>
         </div>
         {% if review.brew_method %}
@@ -48,6 +52,7 @@
   <h2>Leave a Review</h2>
   <form action="/reviews/create" method="post">
     <input type="hidden" name="cafe_id" value="{{ cafe.id }}">
+    <input type="hidden" name="cafe_name" value="{{ cafe.name }}">
     
     <label for="reviewer_name">Your Name:</label>
     <input type="text" id="reviewer_name" name="reviewer_name" required>

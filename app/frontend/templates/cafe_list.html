@@ -38,7 +38,7 @@
       <p><b>Address:</b> {{ cafe.address }}</p>
       <p><b>Brew Methods:</b> {{ cafe.brew_methods or 'N/A' }}</p>
       <p><b>Description:</b> {{ cafe.description or 'No description available.' }}</p>
-      <a href="/cafes/detail/{{ cafe.id }}">View Details</a>
+      <a href="/cafes/{{ cafe.name }}">View details</a>
     </div>
   {% endfor %}
 </body>

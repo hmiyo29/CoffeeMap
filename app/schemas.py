@@ -35,6 +35,7 @@ class ReviewBase(BaseModel):
 
 class ReviewCreate(ReviewBase):
     cafe_id: int  # Required to link review to a cafe
+    created_at: str  # Timestamp for when the review was created
 
 class Review(ReviewBase):
     id: int

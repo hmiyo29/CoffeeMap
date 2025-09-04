@@ -96,12 +96,20 @@ def list_cafes(
         {"request": request, "cafes": cafes, "search": search, "brew_method": brew_method}
     )
 
-@router.get("/detail/{cafe_id}", response_class=HTMLResponse)
-def cafe_detail(request: Request, cafe_id: int, db: Session = Depends(get_db)):
-    cafe = crud.get_cafe(db, cafe_id=cafe_id)
+#use cafe name in url instead of id
+# Redundant - to be removed later
+@router.get("/detail/{cafe_name}", response_class=HTMLResponse)
+def cafe_detail(request: Request, cafe_name: str, db: Session = Depends(get_db)):
+    cafe = crud.get_cafe_by_name(db, cafe_name=cafe_name)
     if not cafe:
         raise HTTPException(status_code=404, detail="Cafe not found")
-    return templates.TemplateResponse("cafe_detail.html", {"request": request, "cafe": cafe})
+
+    reviews = crud.get_reviews_by_cafe(db, cafe.id)
+
+    return templates.TemplateResponse(
+        "cafe_detail.html",
+        {"request": request, "cafe": cafe, "reviews": reviews}
+    )
 
 # -------------------------------------
 # Get all cafes
@@ -122,9 +130,9 @@ def read_cafes(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
 #         raise HTTPException(status_code=404, detail="Cafe not found")
 #     return cafe
 
-@router.get("/{cafe_id}", response_class=HTMLResponse)
-def read_cafe_detail(request: Request, cafe_id: int, db: Session = Depends(get_db)):
-    cafe = crud.get_cafe(db, cafe_id=cafe_id)
+@router.get("/{cafe_name}", response_class=HTMLResponse)
+def read_cafe_detail(request: Request, cafe_name: str, db: Session = Depends(get_db)):
+    cafe = crud.get_cafe_by_name(db, cafe_name=cafe_name)
     if cafe is None:
         raise HTTPException(status_code=404, detail="Cafe not found")
     return templates.TemplateResponse("cafe_detail.html", {"request": request, "cafe": cafe, "reviews": cafe.reviews})
@@ -132,9 +140,11 @@ def read_cafe_detail(request: Request, cafe_id: int, db: Session = Depends(get_d
 # -------------------------------------
 # Soft delete a cafe
 # -------------------------------------
-@router.delete("/{cafe_id}", response_model=schemas.Cafe)
-def delete_cafe(cafe_id: int, db: Session = Depends(get_db)):
-    deleted_cafe = crud.delete_cafe(db, cafe_id=cafe_id)
+
+
+@router.delete("/{cafe_name}", response_model=schemas.Cafe)
+def delete_cafe(cafe_name: str, db: Session = Depends(get_db)):
+    deleted_cafe = crud.delete_cafe(db, cafe_name=cafe_name)
     if deleted_cafe is None:
         raise HTTPException(status_code=404, detail="Cafe not found")
     return deleted_cafe
@@ -143,13 +153,10 @@ def delete_cafe(cafe_id: int, db: Session = Depends(get_db)):
 # -------------------------------------
 # Restore a soft-deleted cafe
 # -------------------------------------
-@router.put("/{cafe_id}/restore", response_model=schemas.Cafe)
-def restore_cafe(cafe_id: int, db: Session = Depends(get_db)):
-    restored_cafe = crud.restore_cafe(db, cafe_id=cafe_id)
+
+@router.put("/{cafe_name}/restore", response_model=schemas.Cafe)
+def restore_cafe(cafe_name: str, db: Session = Depends(get_db)):
+    restored_cafe = crud.restore_cafe(db, cafe_name=cafe_name)
     if restored_cafe is None:
         raise HTTPException(status_code=404, detail="Cafe not found")
     return restored_cafe
-
-
-from fastapi import Query
-
