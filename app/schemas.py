@@ -12,6 +12,7 @@ class CafeBase(BaseModel):
     longitude: Optional[float] = None
     brew_methods: Optional[str] = None  # e.g. "V60, Aeropress, Espresso"
 
+
 class CafeCreate(CafeBase):
     name: str  # Ensure name is required on create
 
@@ -34,6 +35,7 @@ class ReviewBase(BaseModel):
 
 class ReviewCreate(ReviewBase):
     cafe_id: int  # Required to link review to a cafe
+    created_at: str  # Timestamp for when the review was created
 
 class Review(ReviewBase):
     id: int

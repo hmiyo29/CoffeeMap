@@ -12,6 +12,14 @@ from fastapi.requests import Request
 
 app = FastAPI()
 
+
+# Mount templates
+templates = Jinja2Templates(directory="app/frontend/templates")
+
+# Include routers for cafes and reviews
+app.include_router(cafes.router)
+app.include_router(reviews.router)
+
 # Dependency to get DB session
 def get_db():
     db = SessionLocal()
@@ -29,13 +37,9 @@ def db_check(db: Session = Depends(get_db)):
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
-app.include_router(cafes.router)
-app.include_router(reviews.router)
-
-
-# Mount templates
-templates = Jinja2Templates(directory="app/frontend/templates")
 
 @app.get("/map", response_class=HTMLResponse)
 async def get_map(request: Request):
     return templates.TemplateResponse("map.html", {"request": request})
+
+

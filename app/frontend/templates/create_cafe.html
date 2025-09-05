@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Create New Café</title>
+</head>
+<body>
+  <div style="display: flex; flex-direction: column; align-items: center;">
+    <h2>Add a New Café</h2>
+    <form action="/cafes/newcafe" method="post">
+      <label>Name:</label><br>
+      <input type="text" name="name" required><br><br>
+
+      <label>Postal Code:</label><br>
+      <input type="text" name="postal_code" required
+            pattern="[0-9]{4}[A-Za-z]{2}"
+            title="Please enter a valid postal code: 4 digits followed by 2 letters, e.g. 1234AB"><br><br>
+
+
+      <label>Street:</label><br>
+      <input type="text" name="street" required><br><br>
+
+      <label>Street Number:</label><br>
+      <input type="number" name="street_number" required><br><br>
+
+      <label>City:</label><br>
+      <input type="text" name="city" required><br><br>
+
+      <label>Brew Methods (comma separated):</label><br>
+      <input type="text" name="brew_methods"><br><br>
+
+      <button type="submit">Add Café</button>
+    </form>
+  </div>
+</body>
+</html>

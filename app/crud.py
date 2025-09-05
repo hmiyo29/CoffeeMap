@@ -11,9 +11,26 @@ import app.schemas as schemas
 def get_cafes(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Cafe).filter(models.Cafe.adstat == "A").offset(skip).limit(limit).all()
 
+def get_cafes_all(db: Session, skip: int = 0, limit: int = 100):
+    """
+    This function retrieves all cafes regardless of their status.
+    Useful for administrative purposes.
+    """
+    return db.query(models.Cafe).offset(skip).limit(limit).all()
+
 # Get a single cafe by ID
 def get_cafe(db: Session, cafe_id: int):
     return db.query(models.Cafe).filter(models.Cafe.id == cafe_id, models.Cafe.adstat == "A").first()
+
+from sqlalchemy.orm import joinedload
+
+def get_cafe_by_name(db: Session, cafe_name: str):
+    return (
+        db.query(models.Cafe)
+        .options(joinedload(models.Cafe.reviews))  # ✅ eager load reviews
+        .filter(models.Cafe.name == cafe_name, models.Cafe.adstat == "A")
+        .first()
+    )
 
 # Create a new cafe
 # This function creates a new cafe entry in the database.
@@ -76,3 +93,10 @@ def restore_review(db: Session, review_id: int):
         db.commit()
         db.refresh(db_review)
     return db_review
+
+
+# --------------------------------------
+# Get reviews by cafe
+# --------------------------------------
+def get_reviews_by_cafe(db: Session, cafe_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.Review).filter(models.Review.cafe_id == cafe_id, models.Review.adstat == "A").offset(skip).limit(limit).all()

@@ -9,6 +9,10 @@ cafe-review-app/
 │   └── routes/              # Separate route files for better structure
 │       ├── cafes.py         # API endpoints related to cafés
 │       └── reviews.py       # API endpoints related to reviews
+│   └── frontend/              # frontend files
+│       ├── __init__.py      # Initialize the routes package
+│       ├── map.html         # Map view for cafés
+│       └── reviews.html     # Reviews view
 │
 ├── static/                  # Static files (CSS, JS, images)
 ├── templates/               # Jinja2 HTML templates (if you use server-side rendering)
